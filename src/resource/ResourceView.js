@@ -75,6 +75,9 @@ function ResourceView(element, calendar, viewName) {
 	var tm;
 	var colFormat;
 	
+	var showWeekNumbers;
+	var weekNumberTitle;
+	var weekNumberFormat;
 	
 	
 	/* Rendering
@@ -113,6 +116,16 @@ function ResourceView(element, calendar, viewName) {
 		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
+
+		// week # options. (TODO: bad, logic also in other views)
+		showWeekNumbers = opt('weekNumbers');
+		weekNumberTitle = opt('weekNumberTitle');
+		if (opt('weekNumberCalculation') != 'iso') {
+			weekNumberFormat = "w";
+		}
+		else {
+			weekNumberFormat = "W";
+		}
 	}
 	
 	
@@ -124,10 +137,19 @@ function ResourceView(element, calendar, viewName) {
 		var i, j, id, resourceName;
 		var table;
 		var resources = t.getResources;
+        var toplefttitle = "&nbsp;";
+        if (showWeekNumbers && (viewName == 'resourceDay' || viewName == 'resourceWeek')) {
+            var weekStart = _cellDate(0, 0);
+            if (rtl) {
+				toplefttitle = formatDate(weekStart, weekNumberFormat) + weekNumberTitle;
+			} else {
+				toplefttitle = weekNumberTitle + formatDate(weekStart, weekNumberFormat);
+			}
+        }
 		s =
 			"<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
 			"<thead>" +
-			"<tr class='fc-first fc-last'><th class='fc-resourceName'>&nbsp;</th>";
+			"<tr class='fc-first fc-last'><th class='fc-resourceName'>"+toplefttitle+"</th>";
 		for (i=0; i<colCnt; i++) {
 			s +=
 				"<th class='fc- " + headerClass + "'/>";
@@ -298,7 +320,7 @@ function ResourceView(element, calendar, viewName) {
 		viewWidth -= $('th.fc-resourceName').css('width').replace('px','');
 		colContentPositions.clear();
 		colWidth = Math.floor(viewWidth / colCnt);
-		setOuterWidth(headCells.slice(0, -1), colWidth);
+		setOuterWidth(headCells, colWidth);
 	}
 	
 	

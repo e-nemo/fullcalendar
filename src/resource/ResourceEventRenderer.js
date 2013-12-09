@@ -75,6 +75,15 @@ function ResourceEventRenderer() {
 		// for resource day view exclEndDay returns next day, which is incorrect if there's no end time for event.
 		if (viewName == 'resourceDay') {			
 			visEventsEnds = $.map(events, function(event) {
+                if (event.allDay) {
+                    var d;
+                    if (event.end)
+                        d = cloneDate(event.end);
+                    else 
+                        d = cloneDate(event.start);
+                    addDays(d, 1);
+                    return d;
+                }
 				return event.end || addMinutes(cloneDate(event.start), opt('slotMinutes'));
 			});
 		}
